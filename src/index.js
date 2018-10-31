@@ -16,7 +16,8 @@ export {
     componentByNodeRegistry as componentByNodeRegistery,
     componentByNodeRegistry,
     trackComponents,
-    useStaticRendering
+    useStaticRendering,
+    useObservable
 } from "./observer"
 
 export { default as Provider } from "./Provider"

@@ -85,6 +85,11 @@ export class Observer extends React.Component<
     {}
 > {}
 
+/**
+ * Hooks
+ */
+export function useObservable(initialValue: any)
+
 export function useStaticRendering(value: boolean): void
 
 /**
