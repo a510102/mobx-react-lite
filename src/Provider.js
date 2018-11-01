@@ -1,10 +1,25 @@
-import { Children, Component } from "react"
+import React, { Children, Component } from "react"
 import { polyfill } from "react-lifecycles-compat"
 import * as PropTypes from "./propTypes"
+import Context, { supportsContext } from "./context"
 
 const specialReactKeys = { children: true, key: true, ref: true }
 
-class Provider extends Component {
+const Provider = props => {
+    // Can be removed when supporting React 16+ only
+    if (!supportsContext) {
+        return <OldProvider {...props} />
+    }
+    const { ref, children, ...stores } = props
+    if (ref) {
+        console.warn(
+            "MobX Provider: Passing ref is not supported. What do you expect it to do anyway? :)"
+        )
+    }
+    return <Context.Provider value={stores}>{Children.only(children)}</Context.Provider>
+}
+
+class OldProvider extends Component {
     static contextTypes = {
         mobxStores: PropTypes.objectOrObservableObject
     }
@@ -69,6 +84,6 @@ function validStoreName(key) {
 }
 
 // TODO: kill in next major
-polyfill(Provider)
+polyfill(OldProvider)
 
 export default Provider
