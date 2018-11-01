@@ -3,6 +3,7 @@ import hoistStatics from "hoist-non-react-statics"
 import * as PropTypes from "./propTypes"
 import { observer } from "./observer"
 import { isStateless } from "./utils/utils"
+import { supportsContext, supportsContextHook } from "./context"
 
 const injectorContextTypes = {
     mobxStores: PropTypes.objectOrObservableObject
@@ -29,6 +30,8 @@ const proxiedInjectorProps = {
         enumerable: true
     }
 }
+
+let warnedAboutContext = false
 
 /**
  * Store Injection
@@ -58,6 +61,16 @@ function createStoreInjector(grabStoresFn, component, injectNames) {
                 if (this.props.hasOwnProperty(key)) {
                     newProps[key] = this.props[key]
                 }
+            if (!(this.context.mobxStores || warnedAboutContext)) {
+                if (supportsContext && supportsContextHook) {
+                    console.warn(
+                        "MobX inject: Your React version supports to use hooks and context. It's recommended to replace use of inject with `useMobx`"
+                    )
+                } else {
+                    console.warn("MobX inject: Looks like you forgot to use a Provider?")
+                }
+                warnedAboutContext = true
+            }
             var additionalProps =
                 grabStoresFn(this.context.mobxStores || {}, newProps, this.context) || {}
             for (let key in additionalProps) {
