@@ -22,7 +22,6 @@ export {
 
 export { default as Provider } from "./Provider"
 export { default as inject } from "./inject"
-export { useMobx } from "./context"
 export { disposeOnUnmount } from "./disposeOnUnmount"
 
 import * as propTypes from "./propTypes"
