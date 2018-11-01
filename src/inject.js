@@ -30,6 +30,9 @@ const proxiedInjectorProps = {
     }
 }
 
+const supportsContext = typeof createContext === "function"
+let warnedAboutContext = false
+
 /**
  * Store Injection
  */
@@ -107,6 +110,16 @@ function grabStoresByName(storeNames) {
  * storesToProps(mobxStores, props, context) => newProps
  */
 export default function inject(/* fn(stores, nextProps) or ...storeNames */) {
+    if (!warnedAboutContext) {
+        let warning = "MobX inject is deprecated and will be removed in the major version (6.0)."
+        if (supportsContext) {
+            warning += " Please use React.createContext instead."
+        } else {
+            warning += " Please update to React 16.3 to use React.createContext instead."
+        }
+        console.warn(warning)
+        warnedAboutContext = true
+    }
     let grabStoresFn
     if (typeof arguments[0] === "function") {
         grabStoresFn = arguments[0]

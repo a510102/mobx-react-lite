@@ -18,6 +18,8 @@ let isUsingStaticRendering = false
 
 let warnedAboutObserverInjectDeprecation = false
 
+let hooksSupport = Boolean(useState && useEffect && useMemo)
+
 // WeakMap<Node, Object>;
 export const componentByNodeRegistry = typeof WeakMap !== "undefined" ? new WeakMap() : undefined
 export const renderReporter = new EventEmitter()
@@ -318,30 +320,31 @@ export function observer(arg1, arg2) {
         )
     }
 
-    // Stateless function component:
-    // If it is function but doesn't seem to be a react class constructor,
-    // wrap it to a react class automatically
+    // Function component:
     if (
         typeof componentClass === "function" &&
         (!componentClass.prototype || !componentClass.prototype.render) &&
         !componentClass.isReactClass &&
         !Component.isPrototypeOf(componentClass)
     ) {
-        // TODO: Old implementation probably need to take these into account:
-        // const observerComponent = observer(
-        //     class extends Component {
-        //         static displayName = componentClass.displayName || componentClass.name
-        //         static contextTypes = componentClass.contextTypes
-        //         static propTypes = componentClass.propTypes
-        //         static defaultProps = componentClass.defaultProps
-        //         render() {
-        //             return componentClass.call(this, this.props, this.context)
-        //         }
-        //     }
-        // )
-        // hoistStatics(observerComponent, componentClass)
-        // return observerComponent
-        return observerWithHooksSupport(componentClass)
+        if (hooksSupport) {
+            return observerWithHooksSupport(componentClass)
+        }
+        // If it is function but doesn't seem to be a react class constructor,
+        // wrap it to a react class automatically
+        const observerComponent = observer(
+            class extends Component {
+                static displayName = componentClass.displayName || componentClass.name
+                static contextTypes = componentClass.contextTypes
+                static propTypes = componentClass.propTypes
+                static defaultProps = componentClass.defaultProps
+                render() {
+                    return componentClass.call(this, this.props, this.context)
+                }
+            }
+        )
+        hoistStatics(observerComponent, componentClass)
+        return observerComponent
     }
 
     if (!componentClass) {
@@ -426,6 +429,9 @@ Observer.propTypes = {
 
 // React 16.7 hooks support
 function observerWithHooksSupport(baseComponent) {
+    if (isUsingStaticRendering) {
+        return baseComponent
+    }
     // memo; we are not intested in deep updates
     // in props; we assume that if deep objects are changed,
     // this is in observables, which would have been tracked anyway
@@ -460,6 +466,9 @@ function observerWithHooksSupport(baseComponent) {
 }
 
 export function useObservable(initialValue) {
+    if (typeof initialValue === "function") {
+        return useState(() => observable(initialValue()))[0]
+    }
     return useState(observable(initialValue))[0]
 }
 

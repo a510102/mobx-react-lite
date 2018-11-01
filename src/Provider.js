@@ -1,8 +1,11 @@
-import { Children, Component } from "react"
+import React, { Children, Component } from "react"
 import { polyfill } from "react-lifecycles-compat"
 import * as PropTypes from "./propTypes"
 
 const specialReactKeys = { children: true, key: true, ref: true }
+
+const supportsContext = typeof createContext === "function"
+let warnedAboutProvider = false
 
 class Provider extends Component {
     static contextTypes = {
@@ -17,6 +20,16 @@ class Provider extends Component {
         super(props, context)
         this.state = {}
         copyStores(props, this.state)
+        if (!warnedAboutProvider) {
+            let warning =
+                "MobX Provider is deprecated and will be removed in the major version (6.0)."
+            if (supportsContext) {
+                warning += " Please use React.createContext instead."
+            } else {
+                warning += " Please update to React 16.3 to use React.createContext instead."
+            }
+            warnedAboutProvider = true
+        }
     }
 
     render() {

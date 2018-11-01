@@ -33,3 +33,10 @@ exports[`no warnings in modern react 2`] = `
   </div>
 </div>
 `;
+
+exports[`observer based context using observer to inject throws warning 1`] = `
+Array [
+  "Mobx observer: Using observer to inject stores is deprecated since 4.0. Use \`@inject(\\"store1\\", \\"store2\\") @observer ComponentClass\` or \`inject(\\"store1\\", \\"store2\\")(observer(componentClass))\` instead of \`@observer([\\"store1\\", \\"store2\\"]) ComponentClass\`",
+  "MobX inject is deprecated and will be removed in the major version (6.0). Please use React.createContext instead.",
+]
+`;

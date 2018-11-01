@@ -21,10 +21,8 @@ describe("observer based context", () => {
 
         observer(["test"], () => null)
 
-        expect(warns.length).toBe(1)
-        expect(warns[0]).toBe(
-            'Mobx observer: Using observer to inject stores is deprecated since 4.0. Use `@inject("store1", "store2") @observer ComponentClass` or `inject("store1", "store2")(observer(componentClass))` instead of `@observer(["store1", "store2"]) ComponentClass`'
-        )
+        expect(warns.length).toBe(2)
+        expect(warns).toMatchSnapshot()
 
         console.warn = w
         done()
@@ -35,7 +33,12 @@ describe("observer based context", () => {
             ["foo"],
             createClass({
                 render() {
-                    return <div>context:{this.props.foo}</div>
+                    return (
+                        <div>
+                            context:
+                            {this.props.foo}
+                        </div>
+                    )
                 }
             })
         )
@@ -55,7 +58,12 @@ describe("observer based context", () => {
             ["foo"],
             createClass({
                 render() {
-                    return <div>context:{this.props.foo}</div>
+                    return (
+                        <div>
+                            context:
+                            {this.props.foo}
+                        </div>
+                    )
                 }
             })
         )
@@ -77,7 +85,8 @@ describe("observer based context", () => {
                 render() {
                     return (
                         <div>
-                            context:{this.props.foo}
+                            context:
+                            {this.props.foo}
                             {this.props.bar}
                         </div>
                     )
@@ -130,7 +139,12 @@ describe("observer based context", () => {
             ["foo"],
             createClass({
                 render() {
-                    return <div>context:{this.props.foo}</div>
+                    return (
+                        <div>
+                            context:
+                            {this.props.foo}
+                        </div>
+                    )
                 }
             })
         )
@@ -160,7 +174,12 @@ describe("observer based context", () => {
             ["foo"],
             createClass({
                 render() {
-                    return <div>context:{this.props.foo}</div>
+                    return (
+                        <div>
+                            context:
+                            {this.props.foo}
+                        </div>
+                    )
                 }
             })
         )
@@ -179,7 +198,12 @@ describe("observer based context", () => {
             ["foo"],
             createClass({
                 render() {
-                    return <div>context:{this.props.foo}</div>
+                    return (
+                        <div>
+                            context:
+                            {this.props.foo}
+                        </div>
+                    )
                 }
             })
         )
@@ -222,7 +246,12 @@ describe("observer based context", () => {
             ["foo"],
             createClass({
                 render() {
-                    return <div>context:{this.props.foo}</div>
+                    return (
+                        <div>
+                            context:
+                            {this.props.foo}
+                        </div>
+                    )
                 }
             })
         )

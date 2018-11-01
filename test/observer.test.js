@@ -2,6 +2,7 @@ import createClass from "create-react-class"
 import * as mobx from "mobx"
 import React, { Component } from "react"
 import TestUtils from "react-dom/test-utils"
+import * as TestingLibrary from "react-testing-library"
 import { inject, observer, Observer, onError, Provider, useStaticRendering } from "../src"
 import { asyncReactDOMRender, createTestRoot, sleepHelper, withAsyncConsole, withConsole } from "./"
 
@@ -150,18 +151,20 @@ describe("keep views alive", () => {
             </div>
         )
     })
-    const element = TestUtils.renderIntoDocument(<TestComponent />)
+    const { queryByText } = TestingLibrary.render(<TestComponent />)
 
     test("init state", () => {
         expect(yCalcCount).toBe(1)
-        expect(TestUtils.findRenderedDOMComponentWithTag(element, "div").innerHTML).toBe("hi6")
+        expect(queryByText("hi6")).toBeTruthy()
     })
 
     test("rerender should not need a recomputation of data.y", () => {
         data.z = "hello"
         expect(yCalcCount).toBe(1)
-        expect(TestUtils.findRenderedDOMComponentWithTag(element, "div").innerHTML).toBe("hello6")
+        expect(queryByText("hello6")).toBeTruthy()
     })
+
+    afterAll(TestingLibrary.cleanup)
 })
 
 describe("does not views alive when using static rendering", () => {
@@ -182,6 +185,7 @@ describe("does not views alive when using static rendering", () => {
     })
 
     test("init state is correct", () => {
+        console.log(element.innerHTML)
         expect(renderCount).toBe(1)
         expect(TestUtils.findRenderedDOMComponentWithTag(element, "div").innerHTML).toBe("hi")
     })
@@ -296,7 +300,7 @@ test("component should not be inject", () => {
         )
     )
 
-    expect(msg.length).toBe(1)
+    expect(msg.length).toBe(2)
     console.warn = baseWarn
 })
 
