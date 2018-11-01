@@ -18,8 +18,6 @@ let isUsingStaticRendering = false
 
 let warnedAboutObserverInjectDeprecation = false
 
-let hooksSupport = Boolean(useState && useEffect && useMemo)
-
 // WeakMap<Node, Object>;
 export const componentByNodeRegistry = typeof WeakMap !== "undefined" ? new WeakMap() : undefined
 export const renderReporter = new EventEmitter()
@@ -329,22 +327,21 @@ export function observer(arg1, arg2) {
         !componentClass.isReactClass &&
         !Component.isPrototypeOf(componentClass)
     ) {
-        if (hooksSupport) {
-            return observerWithHooksSupport(componentClass)
-        }
-        const observerComponent = observer(
-            class extends Component {
-                static displayName = componentClass.displayName || componentClass.name
-                static contextTypes = componentClass.contextTypes
-                static propTypes = componentClass.propTypes
-                static defaultProps = componentClass.defaultProps
-                render() {
-                    return componentClass.call(this, this.props, this.context)
-                }
-            }
-        )
-        hoistStatics(observerComponent, componentClass)
-        return observerComponent
+        // TODO: Old implementation probably need to take these into account:
+        // const observerComponent = observer(
+        //     class extends Component {
+        //         static displayName = componentClass.displayName || componentClass.name
+        //         static contextTypes = componentClass.contextTypes
+        //         static propTypes = componentClass.propTypes
+        //         static defaultProps = componentClass.defaultProps
+        //         render() {
+        //             return componentClass.call(this, this.props, this.context)
+        //         }
+        //     }
+        // )
+        // hoistStatics(observerComponent, componentClass)
+        // return observerComponent
+        return observerWithHooksSupport(componentClass)
     }
 
     if (!componentClass) {
